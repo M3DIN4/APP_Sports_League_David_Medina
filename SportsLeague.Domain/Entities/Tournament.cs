@@ -8,6 +8,7 @@ public class Tournament : AuditBase
 
 {
 
+<<<<<<< HEAD
     public string Name { get; set; } = string.Empty;
 
     public string Season { get; set; } = string.Empty;
@@ -27,3 +28,13 @@ public class Tournament : AuditBase
     public ICollection<TournamentSponsor> TournamentSponsors { get; set; } = new List<TournamentSponsor>();
 
 }
+=======
+        // Navigation Properties
+        public ICollection<TournamentTeam> TournamentTeams { get; set; } = new List<TournamentTeam>();
+        public ICollection<TournamentSponsor> TournamentSponsors { get; set; } = new List<TournamentSponsor>();
+
+        // Agregar dentro de la clase Tournament, después de TournamentTeams:
+        public ICollection<Match> Matches { get; set; } = new List<Match>();
+    }
+}
+>>>>>>> e3d6aca (Fase 4 completada)
