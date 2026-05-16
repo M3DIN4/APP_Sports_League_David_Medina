@@ -6,14 +6,15 @@ using SportsLeague.DataAccess.Repositories;
 
 using SportsLeague.Domain.Interfaces.Repositories;
 
+using SportsLeague.Domain.Helpers;
+
 using SportsLeague.Domain.Interfaces.Services;
 
+using SportsLeague.DataAccess.Seeders;
+
 using SportsLeague.Domain.Services;
 
-using SportsLeague.Domain.Interfaces.Repositories; // Add for sponsor interfaces
-using SportsLeague.DataAccess.Repositories; // Add for sponsor repo
-using SportsLeague.Domain.Interfaces.Services; // Add for sponsor service
-using SportsLeague.Domain.Services;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -27,6 +28,29 @@ options.UseSqlServer(
 
 builder.Configuration.GetConnectionString("DefaultConnection")));
 
+// ── Repositories (agregar) ──
+
+builder.Services.AddScoped<IMatchRepository, MatchRepository>();
+
+
+// ── Services (agregar) ──
+
+builder.Services.AddScoped<IMatchService, MatchService>();
+
+// ── Repositories (agregar) ──
+
+builder.Services.AddScoped<IMatchResultRepository, MatchResultRepository>();
+
+builder.Services.AddScoped<IGoalRepository, GoalRepository>();
+
+builder.Services.AddScoped<ICardRepository, CardRepository>();
+
+
+// ── Services (agregar) ──
+
+builder.Services.AddScoped<IMatchEventService, MatchEventService>();
+
+builder.Services.AddScoped<MatchValidationHelper>();
 
 // ── Repositories ──
 
@@ -43,6 +67,7 @@ builder.Services.AddScoped<ITournamentRepository, TournamentRepository>(); // NU
 builder.Services.AddScoped<ITournamentTeamRepository, TournamentTeamRepository>(); // NUEVO
 builder.Services.AddScoped<ISponsorRepository, SponsorRepository>();
 builder.Services.AddScoped<ITournamentSponsorRepository, TournamentSponsorRepository>();
+
 
 
 
@@ -73,6 +98,22 @@ builder.Services.AddSwaggerGen();
 
 // ── Middleware Pipeline ──
 var app = builder.Build();
+// ── Data Seeder ──
+
+using (var scope = app.Services.CreateScope())
+
+{
+
+    var context = scope.ServiceProvider
+
+    .GetRequiredService<LeagueDbContext>();
+
+
+    await context.Database.MigrateAsync(); // Crea la BD + aplica migraciones
+
+    await DataSeeder.SeedAsync(context);
+
+}
 
 if (app.Environment.IsDevelopment())
 {
