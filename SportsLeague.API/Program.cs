@@ -69,7 +69,9 @@ builder.Services.AddScoped<ISponsorRepository, SponsorRepository>();
 builder.Services.AddScoped<ITournamentSponsorRepository, TournamentSponsorRepository>();
 
 
+// ── Services (agregar) ──
 
+builder.Services.AddScoped<IStandingsService, StandingsService>();
 
 // ── Services ──
 
